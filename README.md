@@ -3,7 +3,7 @@
 Logstash Grok patterns
 ===
 
-# ![](images/elastic-logstash-fw.png)
+#### ![](images/elastic-logstash-fw.png)
 
 ##### Logstash Grok patterns for Softnix Log Query
 
@@ -72,7 +72,7 @@ NETSCREENLOG3 %{NETSCREENCOMMONLOG} icmp .*session_id=%{INT:session_id} reason=%
 
 ---
 
-### Simple Config
+# Simple Config
 ###### /etc/logstash/conf.d/simple.conf
 ```
 input {
@@ -101,7 +101,7 @@ output { stdout { codec => rubydebug { metadata => true } } }
 
 # Let's start 
 # Basic
-# ![](images/elastic-logstash-fw.png)
+![](images/elastic-logstash-fw.png)
 
 ---
 
@@ -222,7 +222,7 @@ COMBINEDAPACHELOG %{COMMONAPACHELOG} %{QS:referrer} %{QS:agent}
 ```
 ---
 # End Basic
-# ![](images/elastic-logstash-fw.png)
+![](images/elastic-logstash-fw.png)
 
 ---
 # Q&A
