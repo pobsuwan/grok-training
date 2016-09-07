@@ -6,6 +6,7 @@ Logstash Grok patterns
 #### ![](images/elastic-logstash-fw.png)
 
 ##### Logstash Grok patterns for Softnix Log Query
+https://github.com/pobsuwan/grok-training
 
 ###### Created by [Apiwat Suksuwan](https://github.com/pobsuwan/logstash-conf)
 ###### Software Engineer at softnix technology co. Ltd
