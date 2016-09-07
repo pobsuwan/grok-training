@@ -73,8 +73,8 @@ NETSCREENLOG3 %{NETSCREENCOMMONLOG} icmp .*session_id=%{INT:session_id} reason=%
 
 ---
 
-# Simple Config
-###### /etc/logstash/conf.d/simple.conf
+# Sample Config
+###### /etc/logstash/conf.d/sample.conf
 ```
 input {
     file {
@@ -101,7 +101,7 @@ output { stdout { codec => rubydebug { metadata => true } } }
 ---
 
 # Let's start 
-# Basic
+## Basic
 ![](images/elastic-logstash-fw.png)
 
 ---
@@ -111,7 +111,7 @@ output { stdout { codec => rubydebug { metadata => true } } }
 ```
 83.149.9.216 - - [04/Jan/2015:05:13:42 +0000] "GET /presentations/logstash-monitorama-2013/images/kibana-search.png HTTP/1.1" 200 203023 "http://semicomplete.com/presentations/logstash-monitorama-2013/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.77 Safari/537.36"
 ```
-/root/simple.conf
+/root/sample.conf
 ```
 input {
     file {
@@ -142,12 +142,12 @@ output {
 # Logstash::Run()
 ##### Test config
 ```
-/opt/logstash/bin/logstash -f /root/simple.conf --configtest
+/opt/logstash/bin/logstash -f /root/sample.conf --configtest
 ```
 
 ##### Run
 ```
-/opt/logstash/bin/logstash -f /root/simple.conf
+/opt/logstash/bin/logstash -f /root/sample.conf
 ```
 
 ---
@@ -177,8 +177,8 @@ filter {
 ```
 ##### Test && Run
 ```
-/opt/logstash/bin/logstash -f /root/simple.conf -t
-/opt/logstash/bin/logstash -f /root/simple.conf
+/opt/logstash/bin/logstash -f /root/sample.conf -t
+/opt/logstash/bin/logstash -f /root/sample.conf
 ```
 
 ---
