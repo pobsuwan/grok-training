@@ -301,7 +301,7 @@ filter {
         }
         mutate {
             add_field => { "syslog_timestamp" => "%{syslogmonth} %{syslogdate} %{syslogtime}" }
-            remove_field => [ "syslogmonth", "syslogdatetime", "syslogtime" ]
+            remove_field => [ "syslogmonth", "syslogdate", "syslogtime" ]
         }
     }
 } output { stdout { codec => rubydebug { metadata => true } } }
