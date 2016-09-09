@@ -267,7 +267,7 @@ filter {
 
 ---
 # Logstash::filter()->CSV
-## Example bluecoat log
+##### Example bluecoat log
 ```
 Aug 18 12:30:46 10.8.24.10 #Software: SGOS 6.5.9.8
 Aug 18 12:30:46 10.8.24.10 #Version: 1.0
@@ -322,7 +322,7 @@ filter {
         replace => { "syslog_message" => "%{syslog_message}: My new message" }
         # Replace all forward slashes with underscore
         gsub => [ "fieldname", "/", "_", ]
-        # Convert a field’s value to a different type
+        # Convert a fieldâ€™s value to a different type
         convert => { "port" => "integer" }
     }
 }
