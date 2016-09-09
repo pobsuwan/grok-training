@@ -322,7 +322,7 @@ filter {
         replace => { "syslog_message" => "%{syslog_message}: My new message" }
         # Replace all forward slashes with underscore
         gsub => [ "fieldname", "/", "_", ]
-        # Convert a fieldâ€™s value to a different type
+        # Convert a fields value to a different type
         convert => { "port" => "integer" }
     }
 }
