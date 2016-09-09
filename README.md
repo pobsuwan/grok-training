@@ -282,9 +282,17 @@ Aug 18 12:30:46 10.8.24.10 2016-08-18 05:30:54 40 10.8.10.88 200 TCP_REFRESH_MIS
 ---
 # Logstash::filter()->CSV
 ```
+input {
+    file {
+        path => ["/root/bluecoat.log"]
+        start_position => "beginning"
+        sincedb_path => "/dev/null"
+        add_field => { "type_log" => "bluecoat" }
+    }
+}
 filter {
     if [type_log] =~ "bluecoat" {
-        if ([message] =~ /^#/) {
+        if ([message] =~ /#[A-Z]/) {
             drop{}
         }
         csv {
@@ -296,7 +304,7 @@ filter {
             remove_field => [ "syslogmonth", "syslogdatetime", "syslogtime" ]
         }
     }
-}
+} output { stdout { codec => rubydebug { metadata => true } } }
 ```
 
 ---
@@ -312,7 +320,7 @@ filter {
         rename => { "HOSTORIP" => "client_ip" }
         # Replace data
         replace => { "syslog_message" => "%{syslog_message}: My new message" }
-        # replace all forward slashes with underscore
+        # Replace all forward slashes with underscore
         gsub => [ "fieldname", "/", "_", ]
         # Convert a field’s value to a different type
         convert => { "port" => "integer" }
@@ -322,8 +330,7 @@ filter {
 
 ---
 # Logstash::filter()->Date
-- > rename, remove, replace, and modify fields
-https://www.elastic.co/guide/en/logstash/current/plugins-filters-mutate.html
+https://www.elastic.co/guide/en/logstash/current/plugins-filters-date.html
 ```
 filter {
     date {
