@@ -1,4 +1,5 @@
-<!-- $size: 16:9 -->
+<!-- $width: 1920 -->
+<!-- $height: 900 -->
 
 Logstash Grok patterns
 ===
@@ -146,7 +147,6 @@ filter {
 {
         "message" => "83.149.9.216 - - [04/Jan/2015:05:13:42 +0000] \"GET /presentations/logstash-monitorama-2013/images/kibana-search.png HTTP/1.1\" 200 203023 \"http://semicomplete.com/presentations/logstash-monitorama-2013/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.77 Safari/537.36\"",
      "@timestamp" => "2016-09-07T09:41:05.479Z",
-           "host" => "0.0.0.0",
        "clientip" => "83.149.9.216",
           "ident" => "-",
            "auth" => "-",
@@ -283,11 +283,12 @@ filter {
             ]
         }
     }
-} output { stdout { codec => rubydebug { metadata => true } } }
+} 
+output { stdout { codec => rubydebug { metadata => true } } }
 ```
 
 ---
-# Logstash::filter()->CSV
+# Logstash::filter()->csv
 ##### Example bluecoat log
 ```
 Aug 18 12:30:46 10.8.24.10 #Software: SGOS 6.5.9.8
@@ -301,7 +302,7 @@ Aug 18 12:30:46 10.8.24.10 2016-08-18 05:30:54 40 10.8.10.88 200 TCP_REFRESH_MIS
 ```
 
 ---
-# Logstash::filter()->CSV
+# Logstash::filter()->csv
 ```
 input {
     file {
@@ -317,7 +318,7 @@ filter {
         match => [ "message", "%{COMMONSYSLOG}" ]
     }
     if [type_log] =~ "bluecoat" {
-        if ([message] =~ /#[A-Z]/) {
+        if ([program] =~ /^#[A-Z]/) {
             drop{}
         }
         csv {
@@ -363,6 +364,14 @@ filter {
     }
 }
 ```
+
+---
+# Logstash Grok patterns for Softnix Log Query
+# End
+![](images/elastic-logstash-fw.png)
+
+---
+# Q&A
 
 ---
 
