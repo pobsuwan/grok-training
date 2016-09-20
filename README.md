@@ -198,6 +198,7 @@ COMBINEDAPACHELOG %{COMMONAPACHELOG} %{QS:referrer} %{QS:agent}
 | WORD | \b\w+\b |
 | INT | (?:[+-]?(?:[0-9]+)) |
 | NUMBER | (?:%{BASE10NUM}) |
+| BASE10NUM | (?<![0-9.+-])(?>[+-]?(?:(?:[0-9]+(?:\.[0-9]+)?)|(?:\.[0-9]+))) |
 | IPORHOST | (?:%{HOSTNAME}\|%{IP}) |
 
 ---
