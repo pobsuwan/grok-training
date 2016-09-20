@@ -346,7 +346,11 @@ filter {
         # Replace all forward slashes with underscore
         gsub => [ "fieldname", "/", "_", ]
         # Convert a fields value to a different type
-        convert => { "port" => "integer" }
+        convert => {
+            "a" => "float"
+            "b" => "string"
+            "c" => "integer"
+        }
     }
 }
 ```
@@ -368,6 +372,7 @@ Output date format
 e.g May 31 00:07:17
 ```
 {
+    "syslog_timestamp" => "May 31 00:07:17",
     "timestamp" => "2016-05-31T00:07:17.000Z",
 }
 ```
@@ -480,6 +485,55 @@ filter {
             target => "datetime"
         }
     }
+    
+    if [type_log] =~ "cisco-fw" {
+        grok {
+            patterns_dir => ["/etc/logstash/patterns"]
+            match => [ "syslog_message", "%{CISCOTIMESTAMP:cisco_timestamp}( %{IPORHOST:sysloghost})? : %%{CISCOTAG:ciscotag}: %{GREEDYDATA:cisco_message}"]
+        }
+        grok {
+            match => [
+                "cisco_message", "%{CISCOFW106001}",
+                "cisco_message", "%{CISCOFW106006_106007_106010}",
+                "cisco_message", "%{CISCOFW106014}",
+                "cisco_message", "%{CISCOFW106015}",
+                "cisco_message", "%{CISCOFW106021}",
+                "cisco_message", "%{CISCOFW106023}",
+                "cisco_message", "%{CISCOFW106100}",
+                "cisco_message", "%{CISCOFW110002}",
+                "cisco_message", "%{CISCOFW302010}",
+                "cisco_message", "%{CISCOFW302013_302014_302015_302016}",
+                "cisco_message", "%{CISCOFW302020_302021}",
+                "cisco_message", "%{CISCOFW305011}",
+                "cisco_message", "%{CISCOFW313001_313004_313008}",
+                "cisco_message", "%{CISCOFW313005}",
+                "cisco_message", "%{CISCOFW402117}",
+                "cisco_message", "%{CISCOFW402119}",
+                "cisco_message", "%{CISCOFW419001}",
+                "cisco_message", "%{CISCOFW419002}",
+                "cisco_message", "%{CISCOFW500004}",
+                "cisco_message", "%{CISCOFW602303_602304}",
+                "cisco_message", "%{CISCOFW710001_710002_710003_710005_710006}",
+                "cisco_message", "%{CISCOFW713172}",
+                "cisco_message", "%{CISCOFW733100}"
+            ]
+        }
+        date {
+            match => [ "cisco_timestamp",
+                "MMM dd HH:mm:ss",
+                "MMM d HH:mm:ss",
+                "MMM dd yyyy HH:mm:ss",
+                "MMM d yyyy HH:mm:ss"
+            ]
+            timezone => "Asia/Bangkok"
+            locale => "en"
+            target => "cisco_timestamp"
+        }
+        mutate {
+            remove_field => [ "cisco_message" ]
+        }
+    }
+    
     ###############################################
     
     date {
@@ -505,6 +559,42 @@ output {
     }
     #stdout { codec => rubydebug { metadata => true } }
 }
+```
+---
+# Workshop #1 (5 min)
+/etc/logstash/patterns/softnix
+```
+    if [type_log] =~ "owa"{
+        patterns_dir => ["/etc/logstash/patterns"]
+        grok {
+            match => [ "syslog_message", "%{TIMESTAMP_ISO8601:datetime} %{IPORHOST:dst_ip} %{WORD:method} %{URIPATH:request} (?:%{DATA:param}|-) %{NUMBER:dst_port:int} (?:((?:%{HOSTNAME:domain}\\+)?%{NOTSPACE:username})|-) %{IPORHOST:src_ip}(?: %{DATA:agent}|-) %{NUMBER:response:int} %{NUMBER:status:int} %{NUMBER:win32Status:int} %{NUMBER:sent:int}" ]
+            add_field => [ "utceventime", "%{datetime} +0000" ]
+        }
+        date {
+            match => [ "datetime", "yyyy-MM-dd HH:mm:ss" ]
+            timezone => "Asia/Bangkok"
+            locale => "en"
+            target => "datetime"
+        }
+    }
+```
+
+---
+# Workshop #2 (10 min)
+/etc/logstash/patterns/softnix
+```
+    if [type_log] =~ "checkpoint" {
+        grok {
+            patterns_dir => ["/etc/logstash/patterns"]
+            match => [
+                "syslog_message", ".*Action=\"%{WORD:action}\".* client_name=\"%{DATA: client_name}\".*domain_name=\"%{DATA:domain_name}\" src=\"%{IPV4:src}\" endpoint_ip=\"%{IPV4:endpoint_ip}\" auth_status=\"%{DATA:auth_status}\" identity_src=\"%{DATA:identity_src}\".*src_machine_name=\"%{DATA:src_machine_name}\" src_machine_group=\"%{DATA:src_machine_group}\" auth_method=\"%{DATA:auth_method}\"",
+                "syslog_message", ".*Action=\"%{WORD:action}\".* inzone=\"%{DATA:inzone}\" outzone=\"%{DATA:outzone}\" rule=\"%{INT:rule}\" .*service_id=\"%{DATA:service_id}\" src=\"%{IPV4:src}\" dst=\"%{IPV4:dst}\" proto=\"%{INT:proto}\" product=\"%{DATA:product}\" service=\"%{INT:service}\"",
+                "syslog_message", ".*Action=\"%{WORD:action}\".* inzone=\"%{DATA:inzone}\" outzone=\"%{DATA:outzone}\" rule=\"%{INT:rule}\" .*service_id=\"%{DATA:service_id}\" src=\"%{IPV4:src}\" dst=\"%{IPV4:dst}\" proto=\"%{INT:proto}\" .*src_machine_name=\"%{DATA:machine_name}\" .*product=\"%{DATA:product}\" service=\"%{INT:service}\"",
+                "syslog_message", ".*Action=\"%{WORD:action}\".* inzone=\"%{DATA:inzone}\" outzone=\"%{DATA:outzone}\" rule=\"%{INT:rule}\" .*service_id=\"%{DATA:service_id}\" src=\"%{IPV4:src}\" dst=\"%{IPV4:dst}\" proto=\"%{INT:proto}\" .*dst_machine_name=\"%{DATA:machine_name}\" .*product=\"%{DATA:product}\" service=\"%{INT:service}\"",
+                "syslog_message", ".*Action=\"%{WORD:action}\".*src=\"%{IPV4:src}\" dst=\"%{IPV4:dst}\" proto=\"%{INT:protpo}\".*src_machine_name=\"%{DATA:src_machine_name}\".*product=\"%{DATA:product}\" service=\"%{INT:service}\""
+            ]
+        }
+    }
 ```
 
 ---
