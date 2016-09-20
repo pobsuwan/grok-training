@@ -608,4 +608,3 @@ output {
 ---
 
 # "You in today should be a better person than you in yesterday."
-
