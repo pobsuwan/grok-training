@@ -364,6 +364,148 @@ filter {
     }
 }
 ```
+Output date format
+e.g May 31 00:07:17
+```
+{
+    "timestamp" => "2016-05-31T00:07:17.000Z",
+}
+```
+---
+# Softnix Log Query
+#### /etc/logstash/conf.d/tcpjson.conf
+```
+input {
+    tcp {
+        port => 5140
+        codec => json
+    }
+}
+
+filter {
+    grok {
+        match => [
+            "user",     "%{GREEDYDATA:[@metadata][user]}",
+            "type_log", "%{GREEDYDATA:[@metadata][type_log]}",
+            "uuid",     "%{GREEDYDATA:[@metadata][uuid]}"
+        ]
+        break_on_match => false
+    }
+
+    grok {
+        patterns_dir => ["/etc/logstash/patterns"]
+        match => ["message", "%{COMMONSYSLOG}"]
+    }
+    
+    ################################################
+    
+    if [type_log] =~ "bluecoat" {
+        if ([program] =~ /^#[A-Z]/) {
+            drop{}
+        }
+        csv {
+            source => "syslog_message"
+            columns => [ "date","time","time-taken","c-ip","sc-status","s-action","sc-bytes","cs-bytes","cs-method","cs-uri-scheme","cs-host","cs-uri-port","cs-uri-path","cs-uri-query","cs-username","cs-auth-group","s-hierarchy","s-supplier-name","rs(Content-Type)","cs(Referer)","cs(User-Agent)","sc-filter-result","cs-categories","x-virus-id","s-ip" ]
+            separator => " "
+        }
+    }
+
+    if [type_log] =~ "stonegate" {
+        mutate {
+            gsub => [ "syslog_message" , "\"" , "" ]
+        }
+        csv {
+            source => "syslog_message"
+            columns => [ "date","log_id","node_id","facility","type","event","action","src","dst","service","protocol","src_port","dst_port","rule_id","nat_src","nat_dst","nat_sport","nat_dport","flags","src_if","unknow","unknow","unknow","unknow","unknow","unknow","unknow","unknow","accelapsed","acctxbytes","accrxbytes","unknow","unknow","comp_id","info_msg","natrule_id","unknow","unknow","receptiontime","sender_type","situation","unknow","unknow","event_id","unknow","unknow","unknow","unknow" ]
+            separator => ","
+            skip_empty_columns => true
+        }
+        mutate {
+            remove_field => [ "unknow" ]
+        }
+    }
+
+    if [type_log] =~ "dhcp" {
+        csv {
+            source => "syslog_message"
+            columns => [ "time_id","date","time","description","ip_address","hostname","macddress","username","transaction_id","qresult","probationtime","correlation_id","dhcid","vendor_class(Hex)","vendor_class(ASCII)","user_class(Hex)","user_class(ASCII)","relay_agent_information","dns_reg_error" ]
+            separator => ","
+            skip_empty_columns => true
+        }
+    }
+
+    if [type_log] =~ "netscreen" {
+        grok {
+            patterns_dir => ["/etc/logstash/patterns"]
+            match => [
+                "syslog_message", "%{NETSCREENLOG1}",
+                "syslog_message", "%{NETSCREENLOG2}",
+                "syslog_message", "%{NETSCREENLOG3}"
+            ]
+        }
+    }
+
+    if [type_log] =~ "apache" {
+        grok {
+            match => [ "syslog_message", "%{COMBINEDAPACHELOG}" ] 
+        }
+        date {
+            match => [ "timestamp", "dd/MMM/yyyy:HH:mm:ss Z" ]
+            timezone => "Asia/Bangkok"
+            locale => "en"
+        }
+    }
+    
+    if [type_log] =~ "checkpoint" {
+        grok {
+            match => [
+                "syslog_message", ".*Action=\"%{WORD:action}\".* client_name=\"%{DATA: client_name}\".*domain_name=\"%{DATA:domain_name}\" src=\"%{IPV4:src}\" endpoint_ip=\"%{IPV4:endpoint_ip}\" auth_status=\"%{DATA:auth_status}\" identity_src=\"%{DATA:identity_src}\".*src_machine_name=\"%{DATA:src_machine_name}\" src_machine_group=\"%{DATA:src_machine_group}\" auth_method=\"%{DATA:auth_method}\"",
+                "syslog_message", ".*Action=\"%{WORD:action}\".* inzone=\"%{DATA:inzone}\" outzone=\"%{DATA:outzone}\" rule=\"%{INT:rule}\" .*service_id=\"%{DATA:service_id}\" src=\"%{IPV4:src}\" dst=\"%{IPV4:dst}\" proto=\"%{INT:proto}\" product=\"%{DATA:product}\" service=\"%{INT:service}\"",
+                "syslog_message", ".*Action=\"%{WORD:action}\".* inzone=\"%{DATA:inzone}\" outzone=\"%{DATA:outzone}\" rule=\"%{INT:rule}\" .*service_id=\"%{DATA:service_id}\" src=\"%{IPV4:src}\" dst=\"%{IPV4:dst}\" proto=\"%{INT:proto}\" .*src_machine_name=\"%{DATA:machine_name}\" .*product=\"%{DATA:product}\" service=\"%{INT:service}\"",
+                "syslog_message", ".*Action=\"%{WORD:action}\".* inzone=\"%{DATA:inzone}\" outzone=\"%{DATA:outzone}\" rule=\"%{INT:rule}\" .*service_id=\"%{DATA:service_id}\" src=\"%{IPV4:src}\" dst=\"%{IPV4:dst}\" proto=\"%{INT:proto}\" .*dst_machine_name=\"%{DATA:machine_name}\" .*product=\"%{DATA:product}\" service=\"%{INT:service}\"",
+                "syslog_message", ".*Action=\"%{WORD:action}\".*src=\"%{IPV4:src}\" dst=\"%{IPV4:dst}\" proto=\"%{INT:protpo}\".*src_machine_name=\"%{DATA:src_machine_name}\".*product=\"%{DATA:product}\" service=\"%{INT:service}\""
+            ]
+        }
+    }
+
+    if [type_log] =~ "owa"{
+        grok {
+            match => [ "syslog_message", "%{TIMESTAMP_ISO8601:datetime} %{IPORHOST:dst_ip} %{WORD:method} %{URIPATH:request} (?:%{DATA:param}|-) %{NUMBER:dst_port:int} (?:((?:%{HOSTNAME:domain}\\+)?%{NOTSPACE:username})|-) %{IPORHOST:src_ip}(?: %{DATA:agent}|-) %{NUMBER:response:int} %{NUMBER:status:int} %{NUMBER:win32Status:int} %{NUMBER:sent:int}" ]
+            add_field => [ "utceventime", "%{datetime} +0000" ]
+        }
+        date {
+            match => [ "datetime", "yyyy-MM-dd HH:mm:ss" ]
+            timezone => "Asia/Bangkok"
+            locale => "en"
+            target => "datetime"
+        }
+    }
+    ###############################################
+    
+    date {
+        match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+        timezone => "Asia/Bangkok"
+        locale => "en"
+        target => "timestamp"
+    }
+
+    mutate {
+        remove_field => [ "host", "port", "user", "uuid", "tags", "@version", "syslog_timestamp", "syslog_message" ]
+    }
+}
+
+output {
+    elasticsearch {
+        hosts => [ "127.0.0.1" ]
+        index => "logstash-%{[@metadata][user]}-%{[@metadata][uuid]}-%{+YYYY.MM.dd}"
+        template => "/etc/logstash/templates/elasticsearch-softnix-template.json"
+        template_name => "softnix"
+        flush_size => 500
+        workers => 4
+    }
+    #stdout { codec => rubydebug { metadata => true } }
+}
+```
 
 ---
 # Logstash Grok patterns for Softnix Log Query
