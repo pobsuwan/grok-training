@@ -214,7 +214,7 @@ COMBINEDAPACHELOG %{COMMONAPACHELOG} %{QS:referrer} %{QS:agent}
 ---
 # Example Grok debugger
 https://grokdebug.herokuapp.com/
-message
+#### message
 ```
 2016-09-08T11:14:59 "GET /presentations/logstash-monitorama-2013/images/kibana-search.png HTTP/1.1" 122
 ```
@@ -222,7 +222,7 @@ message
 "%{DATA:rawrequest}" | %{QS:rawrequest} 
 "%{WORD:verb} %{NOTSPACE:request} HTTP/%{NUMBER:httpversion}"
 ```
-pipe ( | ) condition
+#### pipe ( | ) condition
 ```
 %{TIMESTAMP_ISO8601:date} "(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})|%{DATA:rawrequest})"
 ```
