@@ -1,3 +1,5 @@
+<!-- $theme: default -->
+
 <!-- $width: 1920 -->
 <!-- $height: 900 -->
 
@@ -173,7 +175,7 @@ filter {
     }
 }
 ```
-###### Apache pattern is definded
+###### Apache pattern is defined
 ```
 COMMONAPACHELOG %{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] "(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})" %{NUMBER:response} (?:%{NUMBER:bytes}|-)
 COMBINEDAPACHELOG %{COMMONAPACHELOG} %{QS:referrer} %{QS:agent}
