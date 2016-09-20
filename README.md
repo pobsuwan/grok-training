@@ -561,7 +561,7 @@ output {
 }
 ```
 ---
-# Workshop #1 (5 min)
+# Workshop #1 Pattern (5 min)
 /etc/logstash/patterns/softnix
 ```
     if [type_log] =~ "owa"{
@@ -580,7 +580,7 @@ output {
 ```
 
 ---
-# Workshop #2 (10 min)
+# Workshop #2 Pattern (10 min)
 /etc/logstash/patterns/softnix
 ```
     if [type_log] =~ "checkpoint" {
