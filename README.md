@@ -580,7 +580,7 @@ output {
 ```
 
 ---
-# Workshop #2 Pattern (10 min)
+# Workshop #2 Pattern (15 min)
 /etc/logstash/patterns/softnix
 ```
     if [type_log] =~ "checkpoint" {
