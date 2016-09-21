@@ -43,7 +43,7 @@ https://github.com/pobsuwan/grok-training
 	- [Grok Debugger](https://grokdebug.herokuapp.com/)
 	- [Grok Constructor](http://grokconstructor.appspot.com/)
 - [CSV](https://www.elastic.co/guide/en/logstash/current/plugins-filters-csv.html)
-- [Mutate](https://www.elastic.co/guide/en/logstash/current/plugins-filters-mutate.html) rename, remove, replace, and modify fields
+- [Mutate](https://www.elastic.co/guide/en/logstash/current/plugins-filters-mutate.html) add, rename, remove, replace, and modify fields
 - [Date](https://www.elastic.co/guide/en/logstash/current/plugins-filters-date.html) convert data to date format
 
 ---
@@ -59,7 +59,7 @@ https://github.com/pobsuwan/grok-training
 
 ---
 
-# Let's start 
+# Let's get started
 ## Basic
 ![](images/elastic-logstash-fw.png)
 
