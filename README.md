@@ -622,3 +622,6 @@ output {
 ```
 Aug 9 19:39:56 192.168.163.2 gw0-NLA: 83.149.9.216 - - [04/Jan/2015:05:13:42 +0000] "GET /presentations/logstash-monitorama-2013/images/kibana-search.png HTTP/1.1" /api/v1/game/448661/feed/live/diffPatch ?language=en&startTimecode=20160818_052938 start_time="2011-08-09 19:39:51" duration=5 policy_id=1 service=http proto=6 src zone=Trust dst zone=Untrust reason=Close - TCP RST
 ```
+```
+%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:log_source} %{SYSLOGPROG}: %{IPORHOST:client_ip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] \"(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})\" %{URIPATH:path} %{URIPARAM:param} start_time=\"%{TIMESTAMP_ISO8601:start_time}\" duration=%{INT:duration} policy_id=%{INT:policy_id} service=%{DATA:service} proto=%{INT:proto} src zone=%{WORD:src_zone} dst zone=%{WORD:dst_zone} reason=%{GREEDYDATA:reason}
+```
