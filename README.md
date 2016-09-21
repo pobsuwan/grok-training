@@ -1,7 +1,7 @@
 <!-- $theme: default -->
 
 <!-- $width: 1920 -->
-<!-- $height: 900 -->
+<!-- $height: 1200 -->
 
 Logstash Grok patterns
 ===
@@ -203,10 +203,12 @@ COMBINEDAPACHELOG %{COMMONAPACHELOG} %{QS:referrer} %{QS:agent}
 | BASE10NUM | (?<![0-9.+-])(?>[+-]?(?:(?:[0-9]+(?:\.[0-9]+)?)|(?:\.[0-9]+))) |
 | IPORHOST | (?:%{HOSTNAME}\|%{IP}) |
 
+2016-09-21 11:11:11 softnix 
+
 ---
 # Grok Date Variable
 | NAME | Regular Expression |
-|:-----|:----------:|
+|:-----|:-----------|
 | TIMESTAMP_ISO8601 | %{YEAR}-%{MONTHNUM}-%{MONTHDAY}[T ]%{HOUR}:?%{MINUTE}(?::?%{SECOND})?%{ISO8601_TIMEZONE}?|
 | Format = | 2016-09-08T11:14:59 |
 | SYSLOGTIMESTAMP | %{MONTH} +%{MONTHDAY} %{TIME}
@@ -326,7 +328,7 @@ filter {
         }
         csv {
             source => "syslog_message"
-            columns => [ "source","date","time","time-taken","c-ip","sc-status","s-action","sc-bytes","cs-bytes","cs-method","cs-uri-scheme","cs-host","cs-uri-port","cs-uri-path","cs-uri-query","cs-username","cs-auth-group","s-hierarchy","s-supplier-name","rs(Content-Type)","cs(Referer)","cs(User-Agent)","sc-filter-result","cs-categories","x-virus-id","s-ip" ]
+            columns => [ "date","time","time-taken","c-ip","sc-status","s-action","sc-bytes","cs-bytes","cs-method","cs-uri-scheme","cs-host","cs-uri-port","cs-uri-path","cs-uri-query","cs-username","cs-auth-group","s-hierarchy","s-supplier-name","rs(Content-Type)","cs(Referer)","cs(User-Agent)","sc-filter-result","cs-categories","x-virus-id","s-ip" ]
             separator => " "
         }
     }
@@ -615,3 +617,8 @@ output {
 ---
 
 # "You in today should be a better person than you in yesterday."
+
+---
+```
+Aug 9 19:39:56 192.168.163.2 gw0-NLA: 83.149.9.216 - - [04/Jan/2015:05:13:42 +0000] "GET /presentations/logstash-monitorama-2013/images/kibana-search.png HTTP/1.1" /api/v1/game/448661/feed/live/diffPatch ?language=en&startTimecode=20160818_052938 start_time="2011-08-09 19:39:51" duration=5 policy_id=1 service=http proto=6 src zone=Trust dst zone=Untrust reason=Close - TCP RST
+```
